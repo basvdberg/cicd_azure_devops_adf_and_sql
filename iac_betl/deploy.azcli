@@ -1,0 +1,11 @@
+
+az login
+
+# to clear the resource group : 
+az deployment group create -f ./empty.bicep -g rg-betl --verbose --mode Complete
+
+# to deploy the resource group
+az deployment group create -f ./iac_betl_with_kv.bicep -g rg-betl --verbose --mode Complete
+
+# to convert a json into bicep
+az bicep decompile -f .\main3.json

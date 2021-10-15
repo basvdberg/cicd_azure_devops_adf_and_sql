@@ -16,10 +16,7 @@ Steps
 4. run the following commands in powershell: 
 
 az login
-
 cd iac_betl
-
-# to deploy the resource group
 az deployment group create -f ./iac.bicep -g rg-betl --verbose --mode Complete
 
 5. go to portal.azure.com to view the results

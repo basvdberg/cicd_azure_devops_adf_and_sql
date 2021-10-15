@@ -15,8 +15,8 @@ Steps
 3. open deploy.azcli to copy/paste the commands that you can run using powershell:
 4. run the following commands in powershell: 
 
-az login
-cd iac_betl
-az deployment group create -f ./iac.bicep -g rg-betl --verbose --mode Complete
+- az login
+- cd iac_betl
+- az deployment group create -f ./iac.bicep -g rg-betl --verbose --mode Complete
 
 5. go to portal.azure.com to view the results

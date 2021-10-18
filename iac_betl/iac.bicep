@@ -23,6 +23,9 @@ param connectionStringSqldbRdw string = 'integrated security=False;encrypt=True;
 
 var fullAdfName = 'Microsoft.DataFactory/factories/${adfName}'
 var tenantId = subscription().tenantId
+
+param ipAddress string = '84.80.150.66'
+
 var repoConfigurationGit = {
   type: 'FactoryGitHubConfiguration'
   accountName: gitAccountName
@@ -66,7 +69,7 @@ resource kv_res 'Microsoft.KeyVault/vaults@2016-10-01' = {
     accessPolicies: [
       {
         tenantId: tenantId
-        objectId: reference('${fullAdfName}/providers/Microsoft.ManagedIdentity/Identities/default', '2015-08-31-PREVIEW').principalId
+        objectId: reference('${fullAdfName}', '2018-06-01', 'Full').identity.principalId
         permissions: {
           keys: [
             'get'
@@ -223,8 +226,8 @@ resource sqls_res_ClientIps 'Microsoft.Sql/servers/firewallRules@2021-02-01-prev
   name: 'ClientIp-2021-7-7_11-20-29'
   parent: sqls_res
   properties: {
-    startIpAddress: '84.80.150.66'
-    endIpAddress: '84.80.150.66'
+    startIpAddress: ipAddress
+    endIpAddress: ipAddress
   }
 }
 
@@ -264,3 +267,4 @@ resource sqldbRdw_res 'Microsoft.Sql/servers/databases@2021-02-01-preview'={
     capacity: 5
   }
 }
+

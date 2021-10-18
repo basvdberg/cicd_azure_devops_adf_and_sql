@@ -20,3 +20,6 @@ Steps
 - az deployment group create -f ./iac.bicep -g rg-betl --verbose --mode Complete
 
 5. go to portal.azure.com to view the results
+
+6. don't forget to delete your resources when you are done using: 
+- az deployment group create -f ./empty.bicep -g rg-betl --verbose --mode Complete

@@ -16,7 +16,8 @@ param adminUser string = 'sa_${sqlsName}'
 param adminPassword string = 'csd@#54gfrji25rtgfdsvf@#!'
 
 param kv string = 'kv-betl-${env}'
-param keyVaultAdminObjectId string = '9d97d845-abef-4e87-a672-2b709e300d20'
+param AzureAdminLogin string = 'Bas van den Berg'
+param AzureAdminObjectId string = '9f83c342-ad77-40f7-9a2d-4eac0f45a402'
 param connectionStringSqldbBetl string = 'integrated security=False;encrypt=True;connection timeout=30;data source=${sqlsName}${environment().suffixes.sqlServerHostname};initial catalog=${sqldbBetl};user id=${adminUser};password=${adminPassword}'
 param connectionStringSqldbAw string = 'integrated security=False;encrypt=True;connection timeout=30;data source=${sqlsName}${environment().suffixes.sqlServerHostname};initial catalog=${sqldbAw};user id=${adminUser};password=${adminPassword}'
 param connectionStringSqldbRdw string = 'integrated security=False;encrypt=True;connection timeout=30;data source=${sqlsName}${environment().suffixes.sqlServerHostname};initial catalog=${sqldbRdw};user id=${adminUser};password=${adminPassword}'
@@ -110,7 +111,7 @@ resource kv_res 'Microsoft.KeyVault/vaults@2016-10-01' = {
       }
       {
         tenantId: tenantId
-        objectId: keyVaultAdminObjectId
+        objectId: AzureAdminObjectId
         permissions: {
           keys: [
             'get'
@@ -180,39 +181,28 @@ resource kv_connectionStringSqldbRdw 'Microsoft.KeyVault/vaults/secrets@2016-10-
   }
 }
 
-resource sqls_res 'Microsoft.Sql/servers@2021-02-01-preview'={
+resource sqls_res 'Microsoft.Sql/servers@2021-02-01-preview' = {
   name: sqlsName
   location: location
   properties: {
     administratorLogin: adminUser
     administratorLoginPassword: adminPassword
+    administrators: {
+      administratorType: 'ActiveDirectory'
+      azureADOnlyAuthentication: false
+      principalType: 'User'
+      login: AzureAdminLogin
+      sid: AzureAdminObjectId
+      tenantId: tenantId
+    }
+
     minimalTlsVersion: '1.2'
     version: '12.0'
     publicNetworkAccess: 'Enabled'
     restrictOutboundNetworkAccess: 'Disabled'
   }
 }
-/*
-resource sqls_res_admin 'Microsoft.Sql/servers/administrators@2020-11-01-preview' = {
-  parent: sqls_res
-  name: 'sqls-aad'
-  properties: {
-    administratorType: 'ActiveDirectory'
-    login: 'bas@c2h.nl'
-    sid: '9f83c342-ad77-40f7-9a2d-4eac0f45a402'
-    tenantId: 'a91d9163-466c-4179-aee2-ef8cb39e4326'
-  }
-}
-*/
-/*
-resource sqls_res_only_aad 'Microsoft.Sql/servers/azureADOnlyAuthentications@2021-02-01-preview' = {
-  parent: sqls_res
-  name: 'Default'
-  properties: {
-    azureADOnlyAuthentication: true
-  }
-}
-*/
+
 resource sqls_res_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallRules@2021-02-01-preview' = {
   parent: sqls_res
   name: 'AllowAllWindowsAzureIps'
